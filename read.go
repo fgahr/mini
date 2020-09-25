@@ -143,6 +143,12 @@ func applyTo(f reflect.Value, s section) {
 					continue
 				}
 				field.Set(reflect.ValueOf(uint64(num)))
+			case reflect.Bool:
+				b, err := strconv.ParseBool(val)
+				if err != nil {
+					continue
+				}
+				field.Set(reflect.ValueOf(b))
 			}
 		}
 	}

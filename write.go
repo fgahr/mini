@@ -36,6 +36,7 @@ func asEntry(f reflect.StructField, v reflect.Value) (entry, bool) {
 	if !ok {
 		return e, false
 	}
+
 	e.Key = name
 	switch v.Kind() {
 	case reflect.String:
@@ -46,7 +47,9 @@ func asEntry(f reflect.StructField, v reflect.Value) (entry, bool) {
 		reflect.Uint32, reflect.Uint64:
 		e.Value = strconv.FormatInt(v.Int(), 10)
 		return e, true
-		// TODO: handle other types
+	case reflect.Bool:
+		e.Value = strconv.FormatBool(v.Bool())
+		return e, true
 	default:
 		return e, false
 	}
@@ -74,6 +77,11 @@ func asSection(f reflect.StructField, v reflect.Value) (section, bool) {
 
 func deconstruct(v interface{}) (ini, error) {
 	x := reflect.ValueOf(v)
+	// dereference pointer if necessary
+	if x.Kind() == reflect.Ptr {
+		x = x.Elem()
+	}
+
 	switch x.Kind() {
 	case reflect.Struct:
 		res := ini{}
@@ -84,7 +92,7 @@ func deconstruct(v interface{}) (ini, error) {
 		}
 		return res, nil
 	default:
-		return ini{}, fmt.Errorf("invalid argument: %v", v)
+		return ini{}, fmt.Errorf("invalid argument type: %T", v)
 	}
 }
 
