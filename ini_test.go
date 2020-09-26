@@ -1,4 +1,4 @@
-package ini
+package tini
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestWriteINI(t *testing.T) {
-	obj := ini{
+	obj := data{
 		Sections: []section{
 			{
 				Name: "foo",

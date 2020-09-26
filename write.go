@@ -1,4 +1,4 @@
-package ini
+package tini
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 var temp *template.Template
 
-func (i *ini) addSection(s section) {
+func (i *data) addSection(s section) {
 	i.Sections = append(i.Sections, s)
 }
 
@@ -75,7 +75,7 @@ func asSection(f reflect.StructField, v reflect.Value) (section, bool) {
 	return s, true
 }
 
-func deconstruct(v interface{}) (ini, error) {
+func deconstruct(v interface{}) (data, error) {
 	x := reflect.ValueOf(v)
 	// dereference pointer if necessary
 	if x.Kind() == reflect.Ptr {
@@ -84,7 +84,7 @@ func deconstruct(v interface{}) (ini, error) {
 
 	switch x.Kind() {
 	case reflect.Struct:
-		res := ini{}
+		res := data{}
 		for i := 0; i < x.NumField(); i++ {
 			if s, ok := asSection(x.Type().Field(i), x.Field(i)); ok {
 				res.addSection(s)
@@ -92,11 +92,11 @@ func deconstruct(v interface{}) (ini, error) {
 		}
 		return res, nil
 	default:
-		return ini{}, fmt.Errorf("invalid argument type: %T", v)
+		return data{}, fmt.Errorf("invalid argument type: %T", v)
 	}
 }
 
-func write(out io.Writer, content ini) error {
+func write(out io.Writer, content data) error {
 	return temp.Execute(out, content)
 }
 

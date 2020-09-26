@@ -1,4 +1,4 @@
-package ini
+package tini
 
 import (
 	"bufio"
@@ -25,7 +25,7 @@ func parseEntry(line string) (string, string) {
 	return strings.TrimSpace(fragments[0]), strings.TrimSpace(fragments[1])
 }
 
-func read(in io.Reader) (ini, error) {
+func read(in io.Reader) (data, error) {
 	scanner := bufio.NewScanner(in)
 	var lines []string
 	for scanner.Scan() {
@@ -34,13 +34,13 @@ func read(in io.Reader) (ini, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return ini{}, fmt.Errorf("error reading INI contents: %v", err)
+		return data{}, fmt.Errorf("error reading INI contents: %v", err)
 	}
 
 	sectionRegex := regexp.MustCompile(`\[\s*\w+\s*\]\s*`)
 	entryRegex := regexp.MustCompile(`\s*\w+\s*=\s*\w*\s*`)
 
-	res := ini{}
+	res := data{}
 	s := section{}
 	for i := 0; i < len(lines); i++ {
 		if strings.HasPrefix(lines[i], ";") {
@@ -154,7 +154,7 @@ func applyTo(f reflect.Value, s section) {
 	}
 }
 
-func construct(v interface{}, res ini) error {
+func construct(v interface{}, res data) error {
 	x := reflect.ValueOf(v)
 	if x.Kind() != reflect.Ptr {
 		return fmt.Errorf("receiver must be a struct pointer; instead received: %T", v)
