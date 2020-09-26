@@ -8,8 +8,8 @@ import (
 	"text/template"
 )
 
-func (i *data) addSection(s section) {
-	i.Sections = append(i.Sections, s)
+func (d *data) addSection(s section) {
+	d.Sections = append(d.Sections, s)
 }
 
 func (s *section) addEntry(e entry) {
