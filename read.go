@@ -25,7 +25,7 @@ func parseEntry(line string) (string, string) {
 	return strings.TrimSpace(fragments[0]), strings.TrimSpace(fragments[1])
 }
 
-func read(in io.Reader) (data, error) {
+func read(in io.Reader) (Data, error) {
 	scanner := bufio.NewScanner(in)
 	var lines []string
 	for scanner.Scan() {
@@ -34,14 +34,14 @@ func read(in io.Reader) (data, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return data{}, fmt.Errorf("error reading INI contents: %v", err)
+		return Data{}, fmt.Errorf("error reading INI contents: %v", err)
 	}
 
 	sectionRegex := regexp.MustCompile(`\[\s*\w+\s*\]\s*`)
 	entryRegex := regexp.MustCompile(`\s*\w+\s*=\s*\w*\s*`)
 
-	res := data{}
-	s := section{}
+	res := Data{}
+	s := Section{}
 	for i := 0; i < len(lines); i++ {
 		if strings.HasPrefix(lines[i], ";") {
 			continue
@@ -50,7 +50,7 @@ func read(in io.Reader) (data, error) {
 		if sectionRegex.MatchString(lines[i]) {
 			if s.Name != "" {
 				res.addSection(s)
-				s = section{}
+				s = Section{}
 			}
 			s.Name = sectionName(lines[i])
 			continue
@@ -68,7 +68,7 @@ func read(in io.Reader) (data, error) {
 	return res, nil
 }
 
-func applyTo(f reflect.Value, s section) {
+func applyTo(f reflect.Value, s Section) {
 	if f.Kind() != reflect.Struct {
 		return
 	}
@@ -154,7 +154,7 @@ func applyTo(f reflect.Value, s section) {
 	}
 }
 
-func construct(v interface{}, res data) error {
+func construct(v interface{}, res Data) error {
 	x := reflect.ValueOf(v)
 	if x.Kind() != reflect.Ptr {
 		return fmt.Errorf("receiver must be a struct pointer; instead received: %T", v)

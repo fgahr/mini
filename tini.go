@@ -20,50 +20,37 @@ func Write(out io.Writer, v interface{}) error {
 // Read reads an INI representation from `in` and adjusts v accordingly.
 // v needs to be a pointer to a suitable struct.
 func Read(in io.Reader, v interface{}) error {
-	res, err := read(in)
+	data, err := read(in)
 	if err != nil {
 		return fmt.Errorf("reading INI input failed: %v", err)
 	}
-	return construct(v, res)
+	return construct(v, data)
 }
 
 // ReadRaw reads INI data from `in` and returns a raw representation of it.
-func ReadRaw(in io.Reader) (map[string]map[string]string, error) {
-	data, err := read(in)
-	if err != nil {
-		return nil, fmt.Errorf("reading INI input failed: %v", err)
-	}
-
-	res := make(map[string]map[string]string)
-	for _, sec := range data.Sections {
-		rawSec := make(map[string]string)
-		for _, e := range sec.Entries {
-			rawSec[e.Key] = e.Value
-		}
-		res[sec.Name] = rawSec
-	}
-	return res, nil
+func ReadRaw(in io.Reader) (Data, error) {
+	return read(in)
 }
 
-type data struct {
-	Sections []section
+type Data struct {
+	Sections []Section
 }
 
-func (i *data) getSection(name string) (section, bool) {
-	for _, s := range i.Sections {
+func (d *Data) getSection(name string) (Section, bool) {
+	for _, s := range d.Sections {
 		if s.Name == name {
 			return s, true
 		}
 	}
-	return section{}, false
+	return Section{}, false
 }
 
-type section struct {
+type Section struct {
 	Name    string
-	Entries []entry
+	Entries []Entry
 }
 
-func (s *section) getValue(name string) (string, bool) {
+func (s *Section) getValue(name string) (string, bool) {
 	for _, e := range s.Entries {
 		if e.Key == name {
 			return e.Value, true
@@ -72,7 +59,7 @@ func (s *section) getValue(name string) (string, bool) {
 	return "", false
 }
 
-type entry struct {
+type Entry struct {
 	Key   string
 	Value string
 }

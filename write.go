@@ -8,11 +8,11 @@ import (
 	"text/template"
 )
 
-func (d *data) addSection(s section) {
+func (d *Data) addSection(s Section) {
 	d.Sections = append(d.Sections, s)
 }
 
-func (s *section) addEntry(e entry) {
+func (s *Section) addEntry(e entry) {
 	s.Entries = append(s.Entries, e)
 }
 
@@ -53,8 +53,8 @@ func asEntry(f reflect.StructField, v reflect.Value) (entry, bool) {
 	}
 }
 
-func asSection(f reflect.StructField, v reflect.Value) (section, bool) {
-	s := section{}
+func asSection(f reflect.StructField, v reflect.Value) (Section, bool) {
+	s := Section{}
 	name, ok := fieldName(f)
 	if !ok {
 		return s, false
@@ -73,7 +73,7 @@ func asSection(f reflect.StructField, v reflect.Value) (section, bool) {
 	return s, true
 }
 
-func deconstruct(v interface{}) (data, error) {
+func deconstruct(v interface{}) (Data, error) {
 	x := reflect.ValueOf(v)
 	// dereference pointer if necessary
 	if x.Kind() == reflect.Ptr {
@@ -82,7 +82,7 @@ func deconstruct(v interface{}) (data, error) {
 
 	switch x.Kind() {
 	case reflect.Struct:
-		res := data{}
+		res := Data{}
 		for i := 0; i < x.NumField(); i++ {
 			if s, ok := asSection(x.Type().Field(i), x.Field(i)); ok {
 				res.addSection(s)
@@ -90,13 +90,13 @@ func deconstruct(v interface{}) (data, error) {
 		}
 		return res, nil
 	default:
-		return data{}, fmt.Errorf("invalid argument type: %T", v)
+		return Data{}, fmt.Errorf("invalid argument type: %T", v)
 	}
 }
 
 var temp *template.Template
 
-func write(out io.Writer, content data) error {
+func write(out io.Writer, content Data) error {
 	if temp == nil {
 		temp = template.Must(template.New("ini").
 			Parse("{{range .Sections}}[{{.Name}}]\r\n" +

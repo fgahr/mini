@@ -6,8 +6,8 @@ import (
 )
 
 func TestWriteINI(t *testing.T) {
-	obj := data{
-		Sections: []section{
+	obj := Data{
+		Sections: []Section{
 			{
 				Name: "foo",
 				Entries: []entry{
