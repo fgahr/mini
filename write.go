@@ -8,8 +8,6 @@ import (
 	"text/template"
 )
 
-var temp *template.Template
-
 func (i *data) addSection(s section) {
 	i.Sections = append(i.Sections, s)
 }
@@ -96,13 +94,14 @@ func deconstruct(v interface{}) (data, error) {
 	}
 }
 
-func write(out io.Writer, content data) error {
-	return temp.Execute(out, content)
-}
+var temp *template.Template
 
-func init() {
-	temp = template.Must(template.New("ini").
-		Parse("{{range .Sections}}[{{.Name}}]\r\n" +
-			"{{range .Entries}}{{.Key}} = {{.Value}}\r\n" +
-			"{{end}}{{end}}"))
+func write(out io.Writer, content data) error {
+	if temp == nil {
+		temp = template.Must(template.New("ini").
+			Parse("{{range .Sections}}[{{.Name}}]\r\n" +
+				"{{range .Entries}}{{.Key}} = {{.Value}}\r\n" +
+				"{{end}}{{end}}"))
+	}
+	return temp.Execute(out, content)
 }
