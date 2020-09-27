@@ -12,7 +12,7 @@ func (d *Data) addSection(s Section) {
 	d.Sections = append(d.Sections, s)
 }
 
-func (s *Section) addEntry(e entry) {
+func (s *Section) addEntry(e Entry) {
 	s.Entries = append(s.Entries, e)
 }
 
@@ -28,8 +28,8 @@ func fieldName(f reflect.StructField) (string, bool) {
 	}
 }
 
-func asEntry(f reflect.StructField, v reflect.Value) (entry, bool) {
-	e := entry{}
+func asEntry(f reflect.StructField, v reflect.Value) (Entry, bool) {
+	e := Entry{}
 	name, ok := fieldName(f)
 	if !ok {
 		return e, false

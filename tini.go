@@ -32,11 +32,13 @@ func ReadRaw(in io.Reader) (Data, error) {
 	return read(in)
 }
 
+// Data represents the kind of INI file data supported by this package.
 type Data struct {
 	Sections []Section
 }
 
-func (d *Data) getSection(name string) (Section, bool) {
+// GetSection tries to find the named section in the data.
+func (d *Data) GetSection(name string) (Section, bool) {
 	for _, s := range d.Sections {
 		if s.Name == name {
 			return s, true
@@ -45,12 +47,22 @@ func (d *Data) getSection(name string) (Section, bool) {
 	return Section{}, false
 }
 
+// GetValue tries to find the vallue associated with a key inside a section.
+func (d *Data) GetValue(section, key string) (string, bool) {
+	if s, ok := d.GetSection(section); ok {
+		return s.GetValue(key)
+	}
+	return "", false
+}
+
+// Section represents a named section in an INI document.
 type Section struct {
 	Name    string
 	Entries []Entry
 }
 
-func (s *Section) getValue(name string) (string, bool) {
+// GetValue tries to find the named entry in a section.
+func (s *Section) GetValue(name string) (string, bool) {
 	for _, e := range s.Entries {
 		if e.Key == name {
 			return e.Value, true
@@ -59,6 +71,7 @@ func (s *Section) getValue(name string) (string, bool) {
 	return "", false
 }
 
+// Entry represents a single key-value pair in an INI section.
 type Entry struct {
 	Key   string
 	Value string

@@ -10,14 +10,14 @@ func TestWriteINI(t *testing.T) {
 		Sections: []Section{
 			{
 				Name: "foo",
-				Entries: []entry{
+				Entries: []Entry{
 					{Key: "bar", Value: "baz"},
 					{Key: "a", Value: "b"},
 				},
 			},
 			{
 				Name: "foo2",
-				Entries: []entry{
+				Entries: []Entry{
 					{Key: "oh_no", Value: "yay"},
 				},
 			},

@@ -58,7 +58,7 @@ func read(in io.Reader) (Data, error) {
 
 		if entryRegex.MatchString(lines[i]) {
 			k, v := parseEntry(lines[i])
-			s.addEntry(entry{k, v})
+			s.addEntry(Entry{k, v})
 		}
 	}
 	if s.Name != "" {
@@ -79,7 +79,7 @@ func applyTo(f reflect.Value, s Section) {
 			continue
 		}
 		field := f.Field(i)
-		if val, ok := s.getValue(key); ok {
+		if val, ok := s.GetValue(key); ok {
 			switch f.Type().Field(i).Type.Kind() {
 			case reflect.String:
 				field.Set(reflect.ValueOf(val))
@@ -170,7 +170,7 @@ func construct(v interface{}, res Data) error {
 		if !ok {
 			continue
 		}
-		if s, ok := res.getSection(sname); ok {
+		if s, ok := res.GetSection(sname); ok {
 			applyTo(x.Field(i), s)
 		}
 	}
