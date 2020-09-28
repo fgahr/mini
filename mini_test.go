@@ -1,4 +1,4 @@
-package tini
+package mini
 
 import (
 	"os"
