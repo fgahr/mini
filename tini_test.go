@@ -3,7 +3,27 @@ package tini
 import (
 	"os"
 	"testing"
+	"time"
 )
+
+func TestWriteTagged(t *testing.T) {
+	type nested struct {
+		Foo string
+		Bar time.Duration
+	}
+	obj := struct {
+		Global nested
+	}{
+		Global: nested{
+			Foo: "foo",
+			Bar: 8 * time.Millisecond,
+		},
+	}
+
+	if err := Write(os.Stdout, obj); err != nil {
+		t.Errorf("writing failed: %v", err)
+	}
+}
 
 func TestWriteINI(t *testing.T) {
 	obj := Data{
@@ -24,7 +44,7 @@ func TestWriteINI(t *testing.T) {
 		},
 	}
 
-	if err := write(os.Stderr, obj); err != nil {
+	if err := write(os.Stdout, obj); err != nil {
 		t.Errorf("writing failed: %v", err)
 	}
 }

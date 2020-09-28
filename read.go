@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func sectionName(line string) string {
@@ -78,8 +80,24 @@ func applyTo(f reflect.Value, s Section) {
 		if !ok {
 			continue
 		}
+
 		field := f.Field(i)
 		if val, ok := s.GetValue(key); ok {
+			if m, ok := field.Addr().Type().MethodByName("FromINI"); ok {
+				m.Func.Call([]reflect.Value{field.Addr(), reflect.ValueOf(val)})
+				continue
+			}
+
+			if field.Type() == reflect.TypeOf(time.Millisecond) {
+				fmt.Fprintln(os.Stderr, "duration encountered")
+				dur, err := time.ParseDuration(val)
+				if err != nil {
+					continue
+				}
+				field.Set(reflect.ValueOf(dur))
+				continue
+			}
+
 			switch f.Type().Field(i).Type.Kind() {
 			case reflect.String:
 				field.Set(reflect.ValueOf(val))
@@ -143,6 +161,18 @@ func applyTo(f reflect.Value, s Section) {
 					continue
 				}
 				field.Set(reflect.ValueOf(uint64(num)))
+			case reflect.Float32:
+				num, err := strconv.ParseFloat(val, 32)
+				if err != nil {
+					continue
+				}
+				field.Set(reflect.ValueOf(float32(num)))
+			case reflect.Float64:
+				num, err := strconv.ParseFloat(val, 64)
+				if err != nil {
+					continue
+				}
+				field.Set(reflect.ValueOf(float64(num)))
 			case reflect.Bool:
 				b, err := strconv.ParseBool(val)
 				if err != nil {

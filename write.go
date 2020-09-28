@@ -36,6 +36,18 @@ func asEntry(f reflect.StructField, v reflect.Value) (Entry, bool) {
 	}
 
 	e.Key = name
+	if m, ok := v.Type().MethodByName("ToINI"); ok {
+		res := m.Func.Call([]reflect.Value{v})
+		e.Value = res[0].String()
+		return e, true
+	}
+
+	if m, ok := v.Type().MethodByName("String"); ok {
+		res := m.Func.Call([]reflect.Value{v})
+		e.Value = res[0].String()
+		return e, true
+	}
+
 	switch v.Kind() {
 	case reflect.String:
 		e.Value = v.String()
@@ -44,6 +56,9 @@ func asEntry(f reflect.StructField, v reflect.Value) (Entry, bool) {
 		reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16,
 		reflect.Uint32, reflect.Uint64:
 		e.Value = strconv.FormatInt(v.Int(), 10)
+		return e, true
+	case reflect.Float32, reflect.Float64:
+		e.Value = strconv.FormatFloat(v.Float(), 'g', 12, 64)
 		return e, true
 	case reflect.Bool:
 		e.Value = strconv.FormatBool(v.Bool())
