@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -89,7 +88,6 @@ func applyTo(f reflect.Value, s Section) {
 			}
 
 			if field.Type() == reflect.TypeOf(time.Millisecond) {
-				fmt.Fprintln(os.Stderr, "duration encountered")
 				dur, err := time.ParseDuration(val)
 				if err != nil {
 					continue
