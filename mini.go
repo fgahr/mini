@@ -1,4 +1,4 @@
-// Package tini defines functions to write and read simple INI files
+// Package mini defines functions to write and read simple INI files
 // from and to suitable structs.
 package mini
 
