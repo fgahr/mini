@@ -82,8 +82,8 @@ type LogConf struct {
 
 // Config shows a typical top-level configuration with several sections.
 type Config struct {
-	DB  DBConf  `ini:"db"`
-	Net NetConf `ini:"net"`
+	DB  DBConf  `ini:"database"`
+	Net NetConf `ini:"network"`
 	Log LogConf `ini:"logger"`
 }
 

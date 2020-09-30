@@ -26,7 +26,7 @@ $ go build demo.go
 # write the default config, then read it back and write it again
 # relax, I'm aware this makes no sense, it's just a demo
 $ ./demo defaults | ./demo pipe
-[db]
+[database]
 host = localhost
 ...
 ```
@@ -70,8 +70,8 @@ type NetConf struct {
 
 // Config shows a typical top-level configuration with several sections.
 type Config struct {
-	DB  DBConf  `ini:"db"`
-	Net NetConf `ini:"net"`
+	DB  DBConf  `ini:"database"`
+	Net NetConf `ini:"network"`
 	// ...
 }
 ```
