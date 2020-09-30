@@ -22,9 +22,13 @@ There is a `demo/demo.go` file in this repository that you can build with
 
 ```sh
 # build
-go build demo.go
-# run
-./demo defaults | ./demo pipe
+$ go build demo.go
+# write the default config, then read it back and write it again
+# relax, I'm aware this makes no sense, it's just a demo
+$ ./demo defaults | ./demo pipe
+[db]
+host = localhost
+...
 ```
 
 or whatever sheenanigans you may come up with. Inspect the source code for a
