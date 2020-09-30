@@ -7,16 +7,6 @@ import (
 	"io"
 )
 
-// Write writes an INI representation of v to `out`.
-// v needs to be a suitable struct.
-func Write(out io.Writer, v interface{}) error {
-	res, err := deconstruct(v)
-	if err != nil {
-		return fmt.Errorf("construction of INI document failed: %v", err)
-	}
-	return write(out, res)
-}
-
 // Read reads an INI representation from `in` and adjusts v accordingly.
 // v needs to be a pointer to a suitable struct.
 func Read(in io.Reader, v interface{}) error {
@@ -27,9 +17,24 @@ func Read(in io.Reader, v interface{}) error {
 	return construct(v, data)
 }
 
+// Write writes an INI representation of v to `out`.
+// v needs to be a suitable struct.
+func Write(out io.Writer, v interface{}) error {
+	res, err := deconstruct(v)
+	if err != nil {
+		return fmt.Errorf("construction of INI document failed: %v", err)
+	}
+	return write(out, res)
+}
+
 // ReadRaw reads INI data from `in` and returns a raw representation of it.
 func ReadRaw(in io.Reader) (Data, error) {
 	return read(in)
+}
+
+// WriteRaw writes a raw data representation to `out`.
+func WriteRaw(out io.Writer, d Data) error {
+	return write(out, d)
 }
 
 // Data represents the kind of INI file data supported by this package.
