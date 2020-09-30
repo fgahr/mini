@@ -3,12 +3,14 @@
 ## What is it?
 
 It's a simple library you can use in your project to serialize configuration
-in a simple INI format.
+in a simple [INI format](https://en.wikipedia.org/wiki/INI_file).
 
 ## What is it not?
 
 An attempt to cover all the possible intricacies of this (underspecified)
 format. See [go-ini](https://github.com/go-ini/ini) for something more complete.
+The exact scope of the INI language covered by this package may or may not be
+covered in a future version of this README. Sorry about that.
 
 ## Why, then?
 
