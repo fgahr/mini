@@ -21,8 +21,9 @@ key = value
 foo = ba;r
 
 [new_section]
-; Everything right from the first equal sign is the value
-exciting = isn't=it?
+; everything right from the first equal sign is the value
+; spaces will be trimmed, though
+exciting=isn't=it?
 ```
 
 ## Why, then?
