@@ -9,8 +9,21 @@ in a simple [INI format](https://en.wikipedia.org/wiki/INI_file).
 
 An attempt to cover all the possible intricacies of this (underspecified)
 format. See [go-ini](https://github.com/go-ini/ini) for something more complete.
-The exact scope of the INI language covered by this package may or may not be
-covered in a future version of this README. Sorry about that.
+The INI language covered by this package is roughly this:
+
+```ini
+; comments start with a semicolon and are ignored
+; begin of a section
+[section]
+key = value
+; semicolons anywhere else are part of the content
+; the value here is `ba;r`
+foo = ba;r
+
+[new_section]
+; Everything right from the first equal sign is the value
+exciting = isn't=it?
+```
 
 ## Why, then?
 
