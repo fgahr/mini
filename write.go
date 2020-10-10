@@ -127,7 +127,11 @@ func (p *presenter) printf(format string, v ...interface{}) {
 
 func write(out io.Writer, content Data) error {
 	p := presenter{out, nil}
-	for _, section := range content.Sections {
+	for i, section := range content.Sections {
+		if i > 0 {
+			// Empty line between sections
+			p.printf("\n")
+		}
 		if section.Comment != "" {
 			for _, line := range strings.Split(section.Comment, "\n") {
 				p.printf("; %s\n", line)
