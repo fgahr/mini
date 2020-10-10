@@ -64,6 +64,7 @@ func (d *Data) GetValue(section, key string) (string, bool) {
 type Section struct {
 	Name    string
 	Entries []Entry
+	Comment string
 }
 
 // GetValue tries to find the named entry in a section.
@@ -78,6 +79,7 @@ func (s *Section) GetValue(name string) (string, bool) {
 
 // Entry represents a single key-value pair in an INI section.
 type Entry struct {
-	Key   string
-	Value string
+	Key     string
+	Value   string
+	Comment string
 }

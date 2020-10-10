@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 	"strconv"
-	"text/template"
+	"strings"
 )
 
 func (d *Data) addSection(s Section) {
@@ -109,14 +109,38 @@ func deconstruct(v interface{}) (Data, error) {
 	}
 }
 
-var temp *template.Template
+type presenter struct {
+	out io.Writer
+	err error
+}
+
+func (p *presenter) printf(format string, v ...interface{}) {
+	if p.err != nil {
+		return
+	}
+
+	_, p.err = fmt.Fprintf(p.out, format, v...)
+}
 
 func write(out io.Writer, content Data) error {
-	if temp == nil {
-		temp = template.Must(template.New("ini").
-			Parse("{{range .Sections}}[{{.Name}}]\r\n" +
-				"{{range .Entries}}{{.Key}} = {{.Value}}\r\n" +
-				"{{end}}{{end}}"))
+	p := presenter{out, nil}
+	for _, section := range content.Sections {
+		if section.Comment != "" {
+			for _, line := range strings.Split(section.Comment, "\n") {
+				p.printf("; %s\n", line)
+			}
+		}
+		p.printf("[ %s ]\n", section.Name)
+
+		for _, ent := range section.Entries {
+			if ent.Comment != "" {
+				for _, line := range strings.Split(ent.Comment, "\n") {
+					p.printf("; %s\n", line)
+				}
+			}
+			p.printf("%s = %s\n", ent.Key, ent.Value)
+		}
 	}
-	return temp.Execute(out, content)
+
+	return p.err
 }
