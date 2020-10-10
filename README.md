@@ -12,7 +12,7 @@ format. See [go-ini](https://github.com/go-ini/ini) for something more complete.
 The INI language covered by this package is roughly this:
 
 ```ini
-; comments start with a semicolon and are ignored
+; comments start with a semicolon
 ; begin of a section
 [section]
 key = value
@@ -42,6 +42,7 @@ $ go build demo.go
 # write the default config, then read it back and write it again
 # relax, I'm aware this makes no sense, it's just a demo
 $ ./demo defaults | ./demo pipe
+; Database settings
 [database]
 host = localhost
 ...
@@ -85,9 +86,10 @@ type NetConf struct {
 // ...
 
 // Config shows a typical top-level configuration with several sections.
+// `inicomment` tags are rendered as comments in the output.
 type Config struct {
-	DB  DBConf  `ini:"database"`
-	Net NetConf `ini:"network"`
+	DB  DBConf  `ini:"database" inicomment:"Database settings"`
+	Net NetConf `ini:"network" inicomment:"Network settings"`
 	// ...
 }
 ```
@@ -141,8 +143,10 @@ func (l *logLevel) FromINI(s string) error {
 	return nil
 }
 
+// LogConf shows custom (de-)serialization of a value
 type LogConf struct {
-	Level logLevel `ini:"level"`
+	// It can be a good idea to include comments
+	Level logLevel `ini:"level" inicomment:"possible values: off|error|warn|info|debug|trace"`
 }
 
 ```

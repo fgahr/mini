@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -78,14 +79,16 @@ func (l *logLevel) FromINI(s string) error {
 
 // LogConf shows custom (de-)serialization of a value
 type LogConf struct {
-	Level logLevel `ini:"level" inicomment:"off|error|warn|info|debug|trace"`
+	// It can be a good idea to include comments
+	Level logLevel `ini:"level" inicomment:"possible values: off|error|warn|info|debug|trace"`
 }
 
 // Config shows a typical top-level configuration with several sections.
+// `inicomment` tags are rendered as comments in the output.
 type Config struct {
-	DB  DBConf  `ini:"database"`
-	Net NetConf `ini:"network" inicomment:"Network configuration"`
-	Log LogConf `ini:"logger" inicomment:"Logger configuration"`
+	DB  DBConf  `ini:"database" inicomment:"Database settings"`
+	Net NetConf `ini:"network" inicomment:"Network settings"`
+	Log LogConf `ini:"logger" inicomment:"Logger settings"`
 }
 
 func defaults() Config {
@@ -141,6 +144,14 @@ func main() {
 		defer file.Close()
 		conf := Config{}
 		mini.Read(file, &conf)
+	case "raw":
+		data, err := mini.ReadRaw(os.Stdin)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(4)
+		}
+		enc := json.NewEncoder(os.Stdout)
+		enc.Encode(data)
 	case "pipe":
 		// Read a config and write it to output
 		// Not useful outside a demonstration such as this
