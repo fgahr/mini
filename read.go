@@ -40,6 +40,7 @@ func read(in io.Reader) (Data, error) {
 
 	res := Data{}
 	s := Section{}
+	commentLines := []string{}
 	for i := 0; i < len(lines); i++ {
 		if emptyRegex.MatchString(lines[i]) {
 			// empty line
@@ -47,14 +48,15 @@ func read(in io.Reader) (Data, error) {
 		}
 
 		if strings.HasPrefix(lines[i], ";") {
-			// comment
+			commentLines = append(commentLines, strings.TrimSpace(lines[i][1:]))
 			continue
 		}
 
 		if sectionRegex.MatchString(lines[i]) {
 			if s.Name != "" {
 				res.addSection(s)
-				s = Section{}
+				s = Section{Comment: strings.Join(commentLines, "\n")}
+				commentLines = []string{}
 			}
 			s.Name = sectionName(lines[i])
 			continue
@@ -62,7 +64,8 @@ func read(in io.Reader) (Data, error) {
 
 		if entryRegex.MatchString(lines[i]) {
 			k, v := parseEntry(lines[i])
-			s.addEntry(Entry{k, v, ""})
+			s.addEntry(Entry{k, v, strings.Join(commentLines, "\n")})
+			commentLines = []string{}
 		}
 	}
 	if s.Name != "" {
