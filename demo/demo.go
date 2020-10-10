@@ -84,8 +84,8 @@ type LogConf struct {
 // Config shows a typical top-level configuration with several sections.
 type Config struct {
 	DB  DBConf  `ini:"database"`
-	Net NetConf `ini:"network"`
-	Log LogConf `ini:"logger"`
+	Net NetConf `ini:"network" inicomment:"Network configuration"`
+	Log LogConf `ini:"logger" inicomment:"Logger configuration"`
 }
 
 func defaults() Config {

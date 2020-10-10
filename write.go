@@ -75,6 +75,8 @@ func asSection(f reflect.StructField, v reflect.Value) (Section, bool) {
 	if !ok {
 		return s, false
 	}
+	s.Comment = f.Tag.Get("inicomment")
+
 	s.Name = name
 	switch v.Kind() {
 	case reflect.Struct:
