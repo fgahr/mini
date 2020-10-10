@@ -76,8 +76,9 @@ func (l *logLevel) FromINI(s string) error {
 	return nil
 }
 
+// LogConf shows custom (de-)serialization of a value
 type LogConf struct {
-	Level logLevel `ini:"level"`
+	Level logLevel `ini:"level" inicomment:"off|error|warn|info|debug|trace"`
 }
 
 // Config shows a typical top-level configuration with several sections.

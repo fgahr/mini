@@ -62,7 +62,7 @@ func read(in io.Reader) (Data, error) {
 
 		if entryRegex.MatchString(lines[i]) {
 			k, v := parseEntry(lines[i])
-			s.addEntry(Entry{k, v})
+			s.addEntry(Entry{k, v, ""})
 		}
 	}
 	if s.Name != "" {

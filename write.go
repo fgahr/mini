@@ -34,6 +34,7 @@ func asEntry(f reflect.StructField, v reflect.Value) (Entry, bool) {
 	if !ok {
 		return e, false
 	}
+	e.Comment = f.Tag.Get("inicomment")
 
 	e.Key = name
 	if m, ok := v.Type().MethodByName("ToINI"); ok {
